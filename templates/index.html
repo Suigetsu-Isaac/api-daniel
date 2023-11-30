@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{url_for('static',filename='css/main.css')}}" rel="stylesheet">
+    <title>Clima Hoje</title>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Horario', 'Temperatura'],
+          ['00:00',  37],
+          ['03:00',  25],
+          ['06:00',  40],
+          ['09:00',  28],
+          ['12:00',  34],
+          ['15:00',  38],
+          ['18:00',  27],
+          ['21:00',  18],
+        ]);
+
+        var options = {
+          title: 'Temperatura',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+
+</head>
+<body class="bg-{{bg_body | default('f-azul-claro')}}">
+    
+    <form action="/index" method="post" class="flex justify-center -translate-y-20 items-center transition-transform hover:translate-y-0 hover:transition-transform">
+        <div class="bg-slate-600 py-6 px-12 rounded-b-lg">
+        <input type="text" name="cidade" class="w-[35vw] h-10 px-4 mt-2" placeholder="Digite o nome da sua cidade">
+        <div class="flex justify-end items-center relative">
+        <select name="estado" class="absolute w-20 text-center rounded-lg h-8 mr-2 bottom-1 bg-f-verde text-f-branco">
+            <option value="Pernambuco" selected disabled>UF</option>
+            {% for k,v in estados.items() %}
+
+            <option value="{{v}}">{{k}}</option>
+
+            {% endfor %}
+
+        </select>
+    
+    </div>
+   
+</div>
+<div class="ml-8 bg-{{bg_button|default('f-azul-escuro')}} py-6 px-12 rounded-lg hover:bg-f-verde">
+<button type="submit" class="text-f-branco">Pesquisar Clima</button>
+</div>
+</form>
+
+<main class="flex justify-center items-center">
+     {% if horario == 'dia' %}
+     {% include "dia.html" %}
+     {% elif horario == 'noite' %}
+     {% include "noite.html" %}
+     {% else %}
+     {% include "template.html" %}
+     {% endif %}
+    
+
+    </section>
+
+</main>
+
+
+
+</body>
+</html>

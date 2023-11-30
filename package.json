@@ -1,0 +1,20 @@
+{
+  "name": "daniel",
+  "version": "1.0.0",
+  "description": "api de clima ",
+  "main": "index.js",
+  "scripts": {
+    "create-css": "npx tailwindcss -i ./static/css/super.css -o ./static/css/main.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  },
+  "dependencies": {
+    "feather-icons": "^4.29.1",
+    "flowbite": "^2.0.0",
+    "tw-elements": "^1.0.0"
+  }
+}

@@ -1,0 +1,31 @@
+{% macro cards(dia,tempo,dia_noite,min,max) %}
+{% set path = '/static/img/'+dia_noite+'/'%}  
+<div id="card" class="bg-white w-1/5 rounded-lg p-4 h-full flex gap-y-4 flex-col justify-center items-center">
+    {{dia}}
+    <div class="flex">
+        <img
+    {% if tempo == "Nublado" %}
+       src="{{path+'nublado.png'}}"
+    {% elif tempo == "Limpo" %}
+        src="{{path+'limpo.png'}}"
+    {% else%}
+        src="{{path+'chuvendo.png'}}"
+    {%endif%} 
+     class="w-20 h-20"
+     alt="{{tempo}}"
+     >
+</div>
+<div class="flex flex-col">
+    <p class="font-bold">min: {{min}}º</p>
+    <p class="font-bold">max: {{max}}º</p>
+</div>    
+</div>
+
+{% endmacro %}
+
+
+<section class="bg-gradient-to-r w-[65vw] rounded-lg h-[75vh] from-{{from}} to-{{to}} px-2">
+   
+    {% block card %}
+    {% endblock card %}
+    </section>

@@ -1,0 +1,55 @@
+{% set from = 'f-degrade-de-amarelo'%}
+{% set to = 'f-degrade-para-laranja' %}
+
+{% extends "boilerplate.html" %}
+{% block card %}
+<section id="card-header" class="flex justify-between" >
+    <div id="header-esquerda" class="flex gap-4 p-4 w-[50%]">
+        <img
+            {% if agora['clima']['main'] == 'Nublado' %} 
+                src="/static/img/dia/nublado.png"
+            {% elif agora['clima']['main'] == 'Limpo' %}
+                src="/static/img/dia/sol.png"
+            {% else %}
+                src="/static/img/dia/chuvendo.png" 
+            {% endif %}
+            alt={{agora['clima']['main']}}>
+        <span class="text-3xl font-bold">{{ agora['principal']['temp'] }}º</span>
+
+    <div class="flex flex-col">
+        <p class="font-bold">Chuva: {{agora['principal']['chuva']}}%</p>
+        <p class="font-bold">Umidade: {{agora['principal']['umidade']}}%</p>
+        <p class="font-bold">Vento: {{agora['principal']['vento']}}km/h</p>
+    </div>
+
+</div>
+
+<div id="header-direita" class="p-4 w-[25%]">
+    <p class="text-3xl font-bold">{{agora['clima']['main']}}</p>
+    <span class="text-sm font-bold"> {{agora['clima']['desc']}} </span>
+</div>
+
+</section>
+
+<section id="card-grafic" class="w-full rounded-lg bg-white h-[35%]  flex justify-center items-center">
+
+    <div id="curve_chart" style="width: 100%; height: 90%"></div>
+
+
+</section>
+
+<section id="card-5-dias-preview" class=" flex p-4 gap-x-6">
+
+    {% for dic in previsao %}
+
+    {{ cards(
+        {% if dic['clima']['main'] == 'sol' %}
+            '/static/img/dia/sol.png','sol',
+        {% elif dic %}
+        dic[''],'37'
+        ) 
+    
+    }}
+   
+    {% endfor %}
+{% endblock card %}
