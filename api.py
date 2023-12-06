@@ -9,3 +9,7 @@ ano = int(data[0])
 num = datetime.date(ano,mes,dia).weekday()
 
 print(num)
+
+
+lista=[1,2,4,6]
+

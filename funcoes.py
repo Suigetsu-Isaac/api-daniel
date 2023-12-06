@@ -55,8 +55,8 @@ def agora(lat,lon):
     return {
         'data': {
             'dia': data[0],
-            'horario': data[1]
-            
+            'horario': data[1],
+            'nome' : agora['name']
         },
         'principal':{
             'temp': celsus(main['temp']),
@@ -73,6 +73,8 @@ def agora(lat,lon):
         }
     }  
 
+
+
 def kmh(milhas):
     return int(round(milhas * 1.6,0))
 
@@ -86,7 +88,18 @@ def traducao(texto):
 
 
 
-    
+def pegar_dia_da_semana(data):
+   
+   semana = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo']
+   
+   data = str(data)
+
+   data = data.split('-')
+   dia = int(data[2])
+   mes = int(data[1])
+   ano = int(data[0])
+   num = datetime.date(ano,mes,dia).weekday()
+   return semana[num]    
 
 def previsao5dias(lat,lon):
     
@@ -99,6 +112,7 @@ def previsao5dias(lat,lon):
     dic={
         'data': {
             'dia': '',
+            'dia_semana': '',
             'horario': []
             },
         'principal':{
@@ -132,15 +146,16 @@ def previsao5dias(lat,lon):
         data = e['dt_txt']
         data = data.split(' ')
         horario = data[1]
-        horario = horario.split(":")
-        horario = horario[0]
+        horario = horario[0:5]
         data = data[0]
 
         if (dia != data.split('-')[2]):
+           
             lista_principal.append(dic)
             dic={
                 'data': {
                 'dia': '',
+                'dia_semana': '',
                 'horario': []
                 },
                 'principal':{
@@ -163,7 +178,7 @@ def previsao5dias(lat,lon):
         dia = data.split('-')[2]
  
         dic['data']['dia'] = data
-    
+        dic['data']['dia_semana'] = pegar_dia_da_semana(data)
 
         dic['principal']['temp'].append(celsus(main['temp']))
         dic['principal']['umidade'].append(main['humidity'])
@@ -178,6 +193,7 @@ def previsao5dias(lat,lon):
     
         dic['principal']['chuva'].append(e.get('rain') )
        
+    
         
     return lista_principal
 
