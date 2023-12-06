@@ -12,7 +12,7 @@ module.exports = {
         "f-branco": "#ffffff",
         "f-azul-escuro": "#004aad",
         "f-degrade-de-azul-claro": "#5de0e6",
-        "f-degrade-para-azul-escuro": "004aad",
+        "f-degrade-para-azul-escuro": "#004aad",
         "f-preto": "#000000"
       },
       
