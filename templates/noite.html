@@ -1,24 +1,50 @@
-{% set from = 'f-degrade-de-azul-claro'%}
-{% set to = 'f-degrade-para-azul-escuro' %}
+{% import 'macros.html' as m %}
 
-{% extends "boilerplate.html" %}
-{% block card %}
+<script>
+
+    function createTag(){
+        var c = document.getElementsByClassName("cards");
+        console.log(c)
+    }
+
+</script>
+
+<section class="bg-gradient-to-r w-[90vw] lg:w-[65vw] rounded-lg -mt-16 h-[90vh] from-f-degrade-de-azul-claro to-f-degrade-para-azul-escuro lg:px-2">
+
 <section id="card-header" class="flex justify-between" >
     <div id="header-esquerda" class="flex gap-4 p-4 w-[50%]">
-        <img src="/static/img/dia/nublado.png" alt="nublado">
-        <span class="text-3xl font-bold">37º</span>
+        <img
+            {% if agora['clima']['main'] == 'Nublado' %} 
+                src="/static/img/noite/nublado.png"
+            {% elif agora['clima']['main'] == 'Limpo' %}
+                src="/static/img/noite/limpo.png"
+            {% else %}
+                src="/static/img/noite/chuvendo.png" 
+            {% endif %}
+            alt={{agora['clima']['main']}}
+            class="w-20 h-20">
+        <span class="text-3xl font-bold">{{ agora['principal']['temp'] }}ºC</span>
 
     <div class="flex flex-col">
-        <p class="font-bold">Chuva: 0%</p>
-        <p class="font-bold">Umidade: 26%</p>
-        <p class="font-bold">Vento: 11km/h</p>
+        <p class="font-bold">Chuva: {{agora['principal']['chuva']}}%</p>
+        <p class="font-bold">Umidade: {{agora['principal']['umidade']}}%</p>
+        <p class="font-bold">Vento: {{agora['principal']['vento']}}km/h</p>
     </div>
 
 </div>
 
-<div id="header-direita" class="p-4 w-[25%]">
-    <p class="text-3xl font-bold">Nublado</p>
-    <span class="text-sm font-bold"> Parcialmente Nublado </span>
+
+<div id="header-centro" class="flex flex-col font-bold py-4">
+    <p>clima de</p>
+    <p class="text-3xl"> {{agora['data']['nome']}} </p>
+   
+</div>
+
+
+<div id="header-direita" class="p-4 text-right text-f-branco w-[25%]">
+    <p class="text-3xl font-bold">{{agora['clima']['main']}}</p>
+    <p class="text-sm font-bold" >{{dia_hoje}}, {{agora['data']['horario'][0:5]}}</p>
+    <span class="text-sm font-bold"> {{agora['clima']['desc']}} </span>
 </div>
 
 </section>
@@ -32,9 +58,29 @@
 
 <section id="card-5-dias-preview" class=" flex p-4 gap-x-6">
 
-    {{ cards('/static/img/dia/sol.png','sol','27','37') }}
-    {{ cards('/static/img/dia/sol.png','sol','27','37') }}
-    {{ cards('/static/img/dia/sol.png','sol','27','37') }}
-    {{ cards('/static/img/dia/sol.png','sol','27','37') }}
-    {{ cards('/static/img/dia/sol.png','sol','27','37') }}
-{% endblock card %}
+    {% for dic in previsao %}
+    {% set path = '/static/img/dia/'%}  
+
+    <div id="card" class="bg-white w-1/5 rounded-lg p-4 h-full flex gap-y-4 flex-col justify-center items-center cards">
+        {{dic['data']['dia_semana']}}
+        <div class="flex">
+            
+            <img
+            {% if dic['clima']['main'].count('Nublado') > dic['clima']['main'].count('Limpo') and dic['clima']['main'].count('Nublado')  > dic['clima']['main'].count('Chuvendo') %} 
+                src="/static/img/noite/nublado.png"
+            {% elif dic['clima']['main'].count('Limpo') > dic['clima']['main'].count('Chuvendo')%}
+                src="/static/img/noite/limpo.png"
+            {% else %}
+                src="/static/img/noite/chuvendo.png" 
+            {% endif %}
+            class="w-20 h-20"
+            alt={{dic['clima']['main']}}>
+    </div>
+    <div class="flex flex-col">
+        <p class="font-bold">min: {{dic['principal']['min']|min}}º</p>
+        <p class="font-bold">max: {{dic['principal']['max']|max}}º</p>
+    </div>    
+    </div>
+   
+    {% endfor %}
+</section>
