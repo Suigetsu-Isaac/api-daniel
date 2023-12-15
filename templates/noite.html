@@ -1,4 +1,81 @@
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      var previsao = JSON.parse('{{previsao | tojson}}');
+      var hoje = JSON.parse('{{agora| tojson}}')
+      console.log(previsao)
+      console.log(previsao[0])
+      console.log(hoje.data)
+
+
+      var arrayData = primeiroCaso()
+
+      console.log(arrayData)
+    
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function primeiroCaso(){
+        var horariohoje = hoje.data.horario.substring(0,5)
+        var arrayData = [[horariohoje, hoje.principal.temp]]
+        var agora = previsao[0].principal.temp.map((value,index) => [previsao[0].data.horario[index],value])
+     
+        if (agora.length>=7) arrayData= arrayData.concat(agora.slice(0,7))
+        else    {
+        var falta = 7 - agora.length
+        var proximo = previsao[1].principal.temp.map((value,index) => [previsao[1].data.horario[index],value])
+        arrayData= arrayData.concat(agora)
+        arrayData= arrayData.concat(proximo.slice(0,falta))
+        }
+        return arrayData    
+      }
+      
+      function selectCard(card, dic) {
+        // Remove a classe 'selected' de todos os cartões
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(c => c.classList.remove('selected'));
+  
+        // Adiciona a classe 'selected' apenas ao cartão clicado
+        card.classList.add('selected');
+        var t = dic.principal.temp.length
+        
+        
+        if (t==8){
+            var a = dic.principal.temp.map((value,index) => [dic.data.horario[index],value])
+            console.log(a);
+            arrayData = a;
+            drawChart()
+        }else{
+            arrayData = primeiroCaso();
+            drawChart();
+        }
+      }
+
+      function drawChart() {
+
+        
+        var data = new google.visualization.DataTable()
+        data.addColumn('string','Horario')
+        data.addColumn('number', 'Temperatura')
+        
+        
+        arrayData.forEach((e)=> data.addRow(e))
+         
+        
+
+        var options = {
+          title: 'Temperatura',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
 {% import 'macros.html' as m %}
+
+
 
 <script>
 
@@ -61,7 +138,8 @@
     {% for dic in previsao %}
     {% set path = '/static/img/dia/'%}  
 
-    <div id="card" class="bg-white w-1/5 rounded-lg p-4 h-full flex gap-y-4 flex-col justify-center items-center cards">
+    <div class="card bg-white w-1/5 rounded-lg p-4 h-full cursor-pointer    
+    flex gap-y-4 flex-col justify-center items-center" onclick="selectCard(this,{{dic}})">
         {{dic['data']['dia_semana']}}
         <div class="flex">
             
@@ -82,5 +160,6 @@
     </div>    
     </div>
    
+    
     {% endfor %}
 </section>

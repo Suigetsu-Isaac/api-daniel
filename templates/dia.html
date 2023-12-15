@@ -1,76 +1,165 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  var previsao = JSON.parse('{{previsao | tojson}}');
+  var hoje = JSON.parse('{{agora| tojson}}')
+  console.log(previsao)
+  console.log(previsao[0])
+  console.log(hoje.data)
 
+
+  var arrayData = primeiroCaso()
+
+  console.log(arrayData)
+
+
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function primeiroCaso(){
+    var horariohoje = hoje.data.horario.substring(0,5)
+    var arrayData = [[horariohoje, hoje.principal.temp]]
+    var agora = previsao[0].principal.temp.map((value,index) => [previsao[0].data.horario[index],value])
+ 
+    if (agora.length>=7) arrayData= arrayData.concat(agora.slice(0,7))
+    else    {
+    var falta = 7 - agora.length
+    var proximo = previsao[1].principal.temp.map((value,index) => [previsao[1].data.horario[index],value])
+    arrayData= arrayData.concat(agora)
+    arrayData= arrayData.concat(proximo.slice(0,falta))
+    }
+    return arrayData    
+  }
+  
+  function selectCard(card, dic) {
+    // Remove a classe 'selected' de todos os cartões
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(c => c.classList.remove('selected'));
+
+    // Adiciona a classe 'selected' apenas ao cartão clicado
+    card.classList.add('selected');
+    var t = dic.principal.temp.length
+    
+    
+    if (t==8){
+        var a = dic.principal.temp.map((value,index) => [dic.data.horario[index],value])
+        console.log(a);
+        arrayData = a;
+        drawChart()
+    }else{
+        arrayData = primeiroCaso();
+        drawChart();
+    }
+  }
+
+  function drawChart() {
+
+    
+    var data = new google.visualization.DataTable()
+    data.addColumn('string','Horario')
+    data.addColumn('number', 'Temperatura')
+    
+    
+    arrayData.forEach((e)=> data.addRow(e))
+     
+    
+
+    var options = {
+      title: 'Temperatura',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+    chart.draw(data, options);
+  }
+</script>
 {% import 'macros.html' as m %}
+
+
+
+<script>
+
+function createTag(){
+    var c = document.getElementsByClassName("cards");
+    console.log(c)
+}
+
+</script>
 
 <section class="bg-gradient-to-r w-[90vw] lg:w-[65vw] rounded-lg -mt-16 h-[90vh] from-f-degrade-de-amarelo to-f-degrade-para-laranja lg:px-2">
 
 <section id="card-header" class="flex justify-between" >
-    <div id="header-esquerda" class="flex gap-4 p-4 w-[50%]">
-        <img
-            {% if agora['clima']['main'] == 'Nublado' %} 
-                src="/static/img/dia/nublado.png"
-            {% elif agora['clima']['main'] == 'Limpo' %}
-                src="/static/img/dia/limpo.png"
-            {% else %}
-                src="/static/img/dia/chuvendo.png" 
-            {% endif %}
-            alt={{agora['clima']['main']}}>
-        <span class="text-3xl font-bold">{{ agora['principal']['temp'] }}ºC</span>
+<div id="header-esquerda" class="flex gap-4 p-4 w-[50%]">
+    <img
+        {% if agora['clima']['main'] == 'Nublado' %} 
+            src="/static/img/dia/nublado.png"
+        {% elif agora['clima']['main'] == 'Limpo' %}
+            src="/static/img/dia/limpo.png"
+        {% else %}
+            src="/static/img/dia/chuvendo.png" 
+        {% endif %}
+        alt={{agora['clima']['main']}}
+        class="w-20 h-20">
+    <span class="text-3xl font-bold">{{ agora['principal']['temp'] }}ºC</span>
 
-    <div class="flex flex-col">
-        <p class="font-bold">Chuva: {{agora['principal']['chuva']}}%</p>
-        <p class="font-bold">Umidade: {{agora['principal']['umidade']}}%</p>
-        <p class="font-bold">Vento: {{agora['principal']['vento']}}km/h</p>
-    </div>
+<div class="flex flex-col">
+    <p class="font-bold">Chuva: {{agora['principal']['chuva']}}%</p>
+    <p class="font-bold">Umidade: {{agora['principal']['umidade']}}%</p>
+    <p class="font-bold">Vento: {{agora['principal']['vento']}}km/h</p>
+</div>
 
 </div>
 
 
 <div id="header-centro" class="flex flex-col font-bold py-4">
-    <p>clima de</p>
-    <p class="text-3xl"> {{agora['data']['nome']}} </p>
-   
+<p>clima de</p>
+<p class="text-3xl"> {{agora['data']['nome']}} </p>
+
 </div>
 
 
-<div id="header-direita" class="p-4 text-right w-[25%]">
-    <p class="text-3xl font-bold">{{agora['clima']['main']}}</p>
-    <p class="text-sm font-bold" >{{dia_hoje}}, {{agora['data']['horario'][0:5]}}</p>
-    <span class="text-sm font-bold"> {{agora['clima']['desc']}} </span>
+<div id="header-direita" class="p-4 text-right  w-[25%]">
+<p class="text-3xl font-bold">{{agora['clima']['main']}}</p>
+<p class="text-sm font-bold" >{{dia_hoje}}, {{agora['data']['horario'][0:5]}}</p>
+<span class="text-sm font-bold"> {{agora['clima']['desc']}} </span>
 </div>
 
 </section>
 
 <section id="card-grafic" class="w-full rounded-lg bg-white h-[35%]  flex justify-center items-center">
 
-    <div id="curve_chart" style="width: 100%; height: 90%"></div>
+<div id="curve_chart" style="width: 100%; height: 90%"></div>
 
 
 </section>
 
 <section id="card-5-dias-preview" class=" flex p-4 gap-x-6">
 
-    {% for dic in previsao %}
-    {% set path = '/static/img/dia/'%}  
+{% for dic in previsao %}
+{% set path = '/static/img/dia/'%}  
 
-    <div id="card" class="bg-white w-1/5 rounded-lg p-4 h-full flex gap-y-4 flex-col justify-center items-center">
-        {{dic['data']['dia_semana']}}
-        <div class="flex">
-            
-            <img
-            {% if dic['clima']['main'].count() == 'Nublado' %} 
-                src="/static/img/dia/nublado.png"
-            {% elif dic['clima']['main'].count() == 'Limpo' %}
-                src="/static/img/dia/limpo.png"
-            {% else %}
-                src="/static/img/dia/chuvendo.png" 
-            {% endif %}
-            alt={{dic['clima']['main']}}>
-    </div>
-    <div class="flex flex-col">
-        <p class="font-bold">min: {{dic['principal']['min']|min}}º</p>
-        <p class="font-bold">max: {{dic['principal']['max']|max}}º</p>
-    </div>    
-    </div>
-   
-    {% endfor %}
+<div class="card bg-white w-1/5 rounded-lg p-4 h-full cursor-pointer    
+flex gap-y-4 flex-col justify-center items-center" onclick="selectCard(this,{{dic}})">
+    {{dic['data']['dia_semana']}}
+    <div class="flex">
+        
+        <img
+        {% if dic['clima']['main'].count('Nublado') > dic['clima']['main'].count('Limpo') and dic['clima']['main'].count('Nublado')  > dic['clima']['main'].count('Chuvendo') %} 
+            src="/static/img/dia/nublado.png"
+        {% elif dic['clima']['main'].count('Limpo') > dic['clima']['main'].count('Chuvendo')%}
+            src="/static/img/dia/limpo.png"
+        {% else %}
+            src="/static/img/dia/chuvendo.png" 
+        {% endif %}
+        class="w-20 h-20"
+        alt={{dic['clima']['main']}}>
+</div>
+<div class="flex flex-col">
+    <p class="font-bold">min: {{dic['principal']['min']|min}}º</p>
+    <p class="font-bold">max: {{dic['principal']['max']|max}}º</p>
+</div>    
+</div>
+
+
+{% endfor %}
 </section>

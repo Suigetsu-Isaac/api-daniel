@@ -191,7 +191,10 @@ def previsao5dias(lat,lon):
     
         dic['principal']['vento'].append(kmh(e['wind']['speed']))
     
-        dic['principal']['chuva'].append(e.get('rain') )
+        a = e.get('rain')
+        if a is None:
+            a=0
+        dic['principal']['chuva'].append(a)
        
     
         
